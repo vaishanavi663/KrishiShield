@@ -12,5 +12,16 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script type="module">
+  import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@0/dist/web.js'
+
+  Typebot.initBubble({
+    typebot: "my-typebot-1imw1ph",
+    theme: {
+       button: { backgroundColor: "#2E7D32" },
+    chatWindow: { backgroundColor: "#E8F5E9" },
+    },
+  });
+</script>
   </body>
 </html>
