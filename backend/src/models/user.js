@@ -16,6 +16,24 @@ const User = sequelize.define('User', {
   passwordHash: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+
+  // onboarding/profile fields that are collected after login
+  landType: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  state: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  requirement: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  farmSize: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

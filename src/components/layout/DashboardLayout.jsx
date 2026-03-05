@@ -5,6 +5,7 @@ import {
   TrendingDown, Lightbulb, FileText, LogOut, Globe, ChevronRight,
   AlertTriangle, HelpCircle
 } from 'lucide-react'
+import { useState, useEffect } from "react";
 
 const navItems = [
   { to: '/app/home',           label: 'Overview',        icon: LayoutDashboard, section: 'main' },
@@ -26,6 +27,45 @@ export default function DashboardLayout() {
   const { user, logout, language, setLanguage } = useAppStore()
   const navigate = useNavigate()
 
+  const [weather, setWeather] = useState(null);
+  const [weatherError, setWeatherError] = useState(null);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.log('Geolocation not available');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      ({ coords: { latitude: lat, longitude: lon } }) => {
+        console.log('User location:', { lat, lon });
+        const apiUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/weather?lat=${lat}&lon=${lon}`;
+        console.log('Fetching from:', apiUrl);
+        
+        fetch(apiUrl)
+          .then(res => {
+            console.log('Response status:', res.status);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+          })
+          .then(data => {
+            console.log('Weather data received:', data);
+            setWeather(data);
+            setWeatherError(null);
+          })
+          .catch(err => {
+            console.error('Weather fetch error:', err);
+            setWeatherError(err.message);
+          });
+      },
+      (err) => {
+        console.error('Geolocation error:', err);
+        setWeatherError(`Location access denied: ${err.message}`);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
+  }, []);
+
   const handleLogout = () => { logout(); navigate('/login') }
 
   return (
@@ -46,10 +86,10 @@ export default function DashboardLayout() {
         {/* User pill */}
         <div className="mx-4 mt-4 mb-2 bg-forest-700/50 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-forest-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
-            {user?.name?.[0]?.toUpperCase() || 'F'}
+            {user?.username?.[0]?.toUpperCase() || 'F'}
           </div>
           <div className="min-w-0">
-            <div className="text-white text-xs font-semibold truncate">{user?.name || 'Farmer'}</div>
+            <div className="text-white text-xs font-semibold truncate">{user?.username || 'Farmer'}</div>
             <div className="text-forest-400 text-xs truncate">{user?.state || 'Maharashtra'}</div>
           </div>
         </div>
@@ -130,6 +170,61 @@ export default function DashboardLayout() {
             </NavLink>
           </div>
         </header>
+
+        {/* 🌤 Weather Error */}
+        {weatherError && (
+          <div className="px-8 pt-4">
+            <div className="bg-orange-50 border border-orange-200 text-orange-800 rounded-lg p-3 text-sm">
+              <strong>Weather unavailable:</strong> {weatherError}
+            </div>
+          </div>
+        )}
+
+       {/* 🌤 Weather Card */}
+{weather && (
+  <div className="px-8 pt-6">
+    <div className="bg-gradient-to-r from-forest-500 to-emerald-400 text-white rounded-2xl shadow-lg p-5 flex flex-col md:flex-row md:items-center md:justify-between">
+
+      {/* Location + condition */}
+      <div className="flex items-center gap-4">
+        <div className="text-4xl">🌤</div>
+        <div>
+          <div className="text-lg font-semibold">
+            {weather.location || "Your Location"}
+          </div>
+          <div className="text-sm opacity-90 capitalize">
+            {weather.condition}
+          </div>
+        </div>
+      </div>
+
+      {/* Temperature */}
+      <div className="mt-4 md:mt-0 text-center">
+        <div className="text-3xl font-bold">
+          {Math.round(weather.temperature)}°C
+        </div>
+        <div className="text-xs opacity-80">Current Temperature</div>
+      </div>
+
+      {/* Details */}
+      <div className="flex gap-6 mt-4 md:mt-0 text-sm">
+
+        <div className="flex flex-col items-center">
+          <span>💧</span>
+          <span className="font-medium">{weather.humidity}%</span>
+          <span className="opacity-80 text-xs">Humidity</span>
+        </div>
+
+        <div className="flex flex-col items-center">
+          <span>💨</span>
+          <span className="font-medium">{weather.windSpeed} m/s</span>
+          <span className="opacity-80 text-xs">Wind</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+)}
 
         <div className="p-8">
           <Outlet />

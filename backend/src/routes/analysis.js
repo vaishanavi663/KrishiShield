@@ -78,14 +78,8 @@ router.post('/detect-disease', auth, async (req, res) => {
   }
 });
 
-// weather forecast (no auth) returns static sample
-router.get('/weather-forecast', (req, res) => {
-  res.json({ location: 'Local area', forecast: [
-    { day: 'Mon', temp: 30, desc: 'Sunny' },
-    { day: 'Tue', temp: 28, desc: 'Partly cloudy' },
-    { day: 'Wed', temp: 26, desc: 'Rain' }
-  ] });
-});
+// the real weather endpoints live in /routes/weather.js
+// this route used to return static data and has been removed.
 
 // yield estimation
 router.post('/yield', auth, (req, res) => {
@@ -145,6 +139,32 @@ router.post('/simulate', auth, (req, res) => {
   const irr       = rain < 150 ? 'High' : rain < 250 ? 'Moderate' : 'Low';
   const fertAdj   = tempDev > 3 ? '+10% N' : tempDev > 0 ? '+5% N' : 'Normal';
   res.json({ riskScore, riskLabel, yieldLoss, yieldAmt, profit, irr, fertAdj });
+});
+
+//onboarding questin saving
+router.post('/onboarding', auth, async (req, res) => {
+  try {
+    const { landType, state, requirement, farmSize } = req.body;
+
+    console.log("Incoming onboarding data:", req.body);
+
+    const record = await CropRecommendation.create({
+      userId: req.user.id,
+      landType,
+      state,
+      requirement,
+      farmSize
+    });
+
+    res.json({
+      message: "Onboarding data saved",
+      record
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 export default router;

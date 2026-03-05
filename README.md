@@ -60,6 +60,7 @@ npm run dev
 A simple Node.js/Express backend has been added under `backend/`.  It uses Sequelize to talk to PostgreSQL (or sqlite by default in development).
 
 1. Copy `backend/.env.example` to `backend/.env` and configure:
+   Add your OpenWeatherMap API key as `WEATHER_API_KEY` in the `.env` file (e.g. `WEATHER_API_KEY=abc123...`).
    ```
    DATABASE_URL=postgres://user:pass@localhost:5432/krishishield_db
    PORT=5000
@@ -74,8 +75,8 @@ A simple Node.js/Express backend has been added under `backend/`.  It uses Seque
    ```
 3. Ensure the database is reachable.  With sqlite you don't need anything else; with PostgreSQL create the database first.
 
-The frontend already reads `VITE_API_URL` from a `.env` file (see root `.env`) and the `useAppStore` utilities use axios to call the endpoints, so no manual changes are required on the client side.
-
+The frontend already reads `VITE_API_URL` from a `.env` file (see root `.env`) and the `useAppStore` utilities use axios to call the endpoints, so no manual changes are required on the client side.  
+For weather features the client will request geolocation and hit `/api/weather` or `/api/weather-forecast`; the server will in turn use `WEATHER_API_KEY` from `backend/.env`.
 ### Available API Endpoints
 - `POST /api/auth/register` – create new user
 - `POST /api/auth/login` – obtain JWT token

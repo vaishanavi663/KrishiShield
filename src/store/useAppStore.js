@@ -20,6 +20,7 @@ apiClient.interceptors.request.use((config) => {
 export const api = {
   register: (data) => apiClient.post('/auth/register', data).then(r => r.data),
   login: (data) => apiClient.post('/auth/login', data).then(r => r.data),
+  saveOnboarding: (data) => apiClient.post('/auth/onboarding', data).then(r => r.data),
 
   analyzeCrop: (params) => apiClient.post('/analyze-crop', params).then(r => r.data),
   detectDisease: (info) => {
@@ -32,7 +33,7 @@ export const api = {
     }).then(r => r.data);
   },
 
-  weatherForecast: () => apiClient.get('/weather-forecast').then(r => r.data),
+  weatherForecast: (lat, lon) => apiClient.get('/weather-forecast', { params: { lat, lon } }).then(r => r.data),
   yieldEstimate: (params) => apiClient.post('/yield', params).then(r => r.data),
   profitReport: () => apiClient.get('/profit-report').then(r => r.data),
   simulate: (params) => apiClient.post('/simulate', params).then(r => r.data),
@@ -64,13 +65,35 @@ export const useAppStore = create(
       // Actions
       login: async (credentials) => {
         const data = await api.login(credentials);
-        set({ user: data.user, token: data.token, isAuthenticated: true });
+        // populate onboarding values if provided by server
+        const onboard = {
+          landType: data.user.landType || '',
+          state: data.user.state || '',
+          requirement: data.user.requirement || '',
+          farmSize: data.user.farmSize || ''
+        };
+        set({
+          user: data.user,
+          token: data.token,
+          isAuthenticated: true,
+          onboarding: onboard
+        });
         localStorage.setItem('krishi_token', data.token);
         return data;
-      },
-      register: async (details) => {
+      },      register: async (details) => {
         const data = await api.register(details);
-        set({ user: data.user, token: data.token, isAuthenticated: true });
+        const onboard = {
+          landType: data.user.landType || '',
+          state: data.user.state || '',
+          requirement: data.user.requirement || '',
+          farmSize: data.user.farmSize || ''
+        };
+        set({
+          user: data.user,
+          token: data.token,
+          isAuthenticated: true,
+          onboarding: onboard
+        });
         localStorage.setItem('krishi_token', data.token);
         return data;
       },
@@ -84,6 +107,20 @@ export const useAppStore = create(
       updateOnboarding: (data) => set((s) => ({
         onboarding: { ...s.onboarding, ...data }
       })),
+
+      saveOnboarding: async (data) => {
+        const resp = await api.saveOnboarding(data);
+        // update store with returned user and onboarding fields
+        const updated = resp.user;
+        const onboard = {
+          landType: updated.landType || '',
+          state: updated.state || '',
+          requirement: updated.requirement || '',
+          farmSize: updated.farmSize || ''
+        };
+        set({ user: { ...get().user, ...updated }, onboarding: onboard });
+        return resp;
+      },
 
       setCropRecommendation: (data) => set({ cropRecommendation: data }),
       setDiseaseResult: (data) => set({ diseaseResult: data }),

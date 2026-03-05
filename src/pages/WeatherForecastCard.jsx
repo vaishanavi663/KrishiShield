@@ -7,10 +7,26 @@ export default function WeatherForecastCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.weatherForecast()
-      .then(data => setForecast(data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    // try to get the user's current position first
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords: { latitude: lat, longitude: lon } }) => {
+          api.weatherForecast(lat, lon)
+            .then(data => setForecast(data))
+            .catch(console.error)
+            .finally(() => setLoading(false));
+        },
+        (err) => {
+          console.error('geolocation failed', err);
+          setLoading(false);
+        }
+      );
+    } else {
+      api.weatherForecast()
+        .then(data => setForecast(data))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
   }, []);
 
   if (loading) {
@@ -41,7 +57,12 @@ export default function WeatherForecastCard() {
         <div className="flex justify-between items-center mb-2">
           <span className="font-medium text-gray-700">{today.day || 'Tomorrow'}</span>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">{today.icon || '🌤'}</span>
+            {/* icon might be an emoji or a url */}
+            {today.icon && today.icon.startsWith('http') ? (
+              <img src={today.icon} alt="" className="w-6 h-6" />
+            ) : (
+              <span className="text-2xl">{today.icon || '🌤'}</span>
+            )}
             <span className="text-xl font-bold text-[#1f5f3d]">{today.temp}°C</span>
           </div>
         </div>

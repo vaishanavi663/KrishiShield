@@ -48,7 +48,7 @@ const STEPS = [
 
 export default function OnboardingPage() {
   const navigate = useNavigate()
-  const { updateOnboarding, login, user } = useAppStore()
+  const { updateOnboarding, saveOnboarding, user } = useAppStore()
   const [step, setStep] = useState(0)
   const [selections, setSelections] = useState({ landType: '', state: '', requirement: '', farmSize: '' })
   const [animating, setAnimating] = useState(false)
@@ -58,15 +58,20 @@ export default function OnboardingPage() {
 
   const select = (val) => setSelections(s => ({ ...s, [current.id]: val }))
 
-  const next = () => {
+  const next = async () => {
     if (!selections[current.id]) return
     if (step < STEPS.length - 1) {
       setAnimating(true)
       setTimeout(() => { setStep(s => s+1); setAnimating(false) }, 200)
     } else {
       updateOnboarding(selections)
-      // ensure user object has state
-      if (user) login({ ...user, state: selections.state })
+      if (user) {
+        try {
+          await saveOnboarding(selections)
+        } catch (err) {
+          console.error('failed to save onboarding data', err)
+        }
+      }
       navigate('/app/home')
     }
   }

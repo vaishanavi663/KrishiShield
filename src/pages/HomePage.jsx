@@ -6,6 +6,7 @@ import FarmSummaryCards from './FarmSummaryCards'
 import WeatherForecastCard from "./WeatherForecastCard";
 import WhatShouldIDoToday from "./WhatShouldIDoToday";
 
+
 const yieldData = [
   { month: 'Sep', yield: 92, target: 95 },
   { month: 'Oct', yield: 88, target: 95 },
@@ -44,7 +45,7 @@ export default function HomePage() {
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold text-forest-800">
-            {greeting}, {user?.name || 'Farmer'}! 🌞
+            {greeting}, {user?.username || 'Farmer'}! 🌞
           </h1>
           <p className="text-forest-500 text-sm mt-0.5">
             {user?.state || 'Maharashtra'} · {onboarding.landType ? onboarding.landType.replace(/^\w/, c => c.toUpperCase()) + ' Soil' : 'Loamy Soil'} · {onboarding.farmSize ? onboarding.farmSize + ' farm' : '5–20 Acres'}
