@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAppStore, api } from '../store/useAppStore'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Sprout, Loader2, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const confData = (recs) => recs.map(r => ({ name: r.name, confidence: r.confidence }))
 
@@ -14,6 +15,7 @@ export default function CropPlannerPage() {
   farmSize: '', soilType: 'Loamy', irrigation: 'Rainfed', previousCrop: ''
 })
 
+  const { t } = useTranslation()
   const set = (k, v) => setForm(s => ({ ...s, [k]: v }))
 
   const analyze = async () => {
@@ -82,15 +84,15 @@ export default function CropPlannerPage() {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="font-display text-2xl font-bold text-forest-800 flex items-center gap-2">
-          <Sprout className="text-forest-500" /> Smart Crop Recommendation Engine
+          <Sprout className="text-forest-500" /> {t('Smart Crop Recommendation Engine')}
         </h1>
-        <p className="text-forest-500 text-sm mt-1">Enter your soil & weather data to get AI-powered crop recommendations</p>
+        <p className="text-forest-500 text-sm mt-1">{t('Enter your soil & weather data to get AI-powered crop recommendations')}</p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">
         {/* Soil Parameters */}
         <div className="card">
-          <h3 className="font-semibold text-forest-800 mb-4 pb-3 border-b border-forest-100">🧪 Soil Parameters</h3>
+          <h3 className="font-semibold text-forest-800 mb-4 pb-3 border-b border-forest-100">{t('🧪 Soil Parameters')}</h3>
           <div className="grid grid-cols-2 gap-4">
             {[
               ['nitrogen',     'Nitrogen (N) kg/ha', 0, 300],
@@ -109,7 +111,7 @@ export default function CropPlannerPage() {
 
         {/* Weather Parameters */}
         <div className="card">
-          <h3 className="font-semibold text-forest-800 mb-4 pb-3 border-b border-forest-100">🌤️ Weather Parameters</h3>
+          <h3 className="font-semibold text-forest-800 mb-4 pb-3 border-b border-forest-100">{t('🌤️ Weather Parameters')}</h3>
           <div className="grid grid-cols-2 gap-4">
             {[
               ['temperature', 'Temperature (°C)', -10, 60],
@@ -117,13 +119,13 @@ export default function CropPlannerPage() {
               ['rainfall',    'Rainfall (mm)', 0, 1000],
             ].map(([k, label, min, max]) => (
               <div key={k}>
-                <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">{label}</label>
+                <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">{t(label)}</label>
                 <input type="number" className="input-field text-sm" min={min} max={max}
                   value={form[k]} onChange={e => set(k, +e.target.value)} />
               </div>
             ))}
             <div>
-              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">Season</label>
+              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">{t('Season')}</label>
               <select className="input-field text-sm" value={form.season} onChange={e => set('season', e.target.value)}>
                 {['Kharif','Rabi','Zaid'].map(s => <option key={s}>{s}</option>)}
               </select>
@@ -133,26 +135,26 @@ export default function CropPlannerPage() {
           {/* Farm Context Inputs */}
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">Farm Size (acres)</label>
+              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">{t('Farm Size (acres)')}</label>
               <input type="number" className="input-field text-sm" min={0} value={form.farmSize}
                 onChange={e => set('farmSize', e.target.value)} />
             </div>
             <div>
-              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">Soil Type</label>
+              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">{t('Soil Type')}</label>
               <select className="input-field text-sm" value={form.soilType}
                 onChange={e => set('soilType', e.target.value)}>
                 {['Sandy','Loamy','Clay','Silty'].map(s => <option key={s}>{s}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">Irrigation</label>
+              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">{t('Irrigation')}</label>
               <select className="input-field text-sm" value={form.irrigation}
                 onChange={e => set('irrigation', e.target.value)}>
                 {['Rainfed','Borewell','Canal','Drip'].map(i => <option key={i}>{i}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">Previous Crop</label>
+              <label className="block text-xs font-bold text-forest-600 uppercase tracking-wider mb-1.5">{t('Previous Crop')}</label>
               <input type="text" className="input-field text-sm" value={form.previousCrop}
                 onChange={e => set('previousCrop', e.target.value)} />
             </div>
@@ -160,8 +162,8 @@ export default function CropPlannerPage() {
           <button onClick={analyze} disabled={loading}
             className="mt-4 btn-primary w-full flex items-center justify-center gap-2 text-sm">
             {loading
-              ? <><Loader2 size={16} className="animate-spin" /> Analyzing with AI...</>
-              : '🔍 Analyze & Recommend'
+              ? <><Loader2 size={16} className="animate-spin" /> {t('Analyzing with AI...')}</>
+              : t('🔍 Analyze & Recommend')
             }
           </button>
         </div>
@@ -170,14 +172,14 @@ export default function CropPlannerPage() {
       {/* Results */}
       {recs.length > 0 && (
         <div className="space-y-5 animate-fade-up">
-          <h3 className="font-display text-xl font-bold text-forest-800">🎯 Top Crop Recommendations</h3>
+          <h3 className="font-display text-xl font-bold text-forest-800">{t('🎯 Top Crop Recommendations')}</h3>
 
           <div className="grid md:grid-cols-3 gap-4">
             {recs.map((r, i) => (
               <div key={i} className={`card relative overflow-hidden hover:-translate-y-1 transition-all ${i === 0 ? 'ring-2 ring-forest-400 shadow-md' : ''}`}>
                 {i === 0 && (
                   <div className="absolute top-0 right-0 bg-forest-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
-                    Best Match
+                    {t('Best Match')}
                   </div>
                 )}
                 <div className="text-3xl mb-2">{i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'}</div>
@@ -191,7 +193,7 @@ export default function CropPlannerPage() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className={riskColors[r.risk]}>{riskIcons[r.risk]} {r.risk.charAt(0).toUpperCase() + r.risk.slice(1)} Risk</span>
+                  <span className={riskColors[r.risk]}>{riskIcons[r.risk]} {t(r.risk.charAt(0).toUpperCase() + r.risk.slice(1) + ' Risk')}</span>
                   <span className="text-xs text-forest-500 font-medium">{r.roi}/acre</span>
                 </div>
               </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { FlaskConical, TrendingDown, TrendingUp } from 'lucide-react'
 import { api } from '../store/useAppStore'
+import { useTranslation } from 'react-i18next'
 
 function calcRisk(rain, price, sev, tempDev) {
   let score = 0
@@ -22,6 +23,7 @@ function buildProjection(rain, price, sev) {
 }
 
 export default function SimulatorPage() {
+  const { t } = useTranslation()
   const [rain,    setRain]    = useState(210)
   const [price,   setPrice]   = useState(1850)
   const [sev,     setSev]     = useState(22)
@@ -63,15 +65,15 @@ export default function SimulatorPage() {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="font-display text-2xl font-bold text-forest-800 flex items-center gap-2">
-          <FlaskConical className="text-forest-500" /> What-If Risk Simulator
+          <FlaskConical className="text-forest-500" /> {t('What-If Risk Simulator')}
         </h1>
-        <p className="text-forest-500 text-sm mt-1">Adjust parameters to simulate risk scenarios and plan ahead</p>
+        <p className="text-forest-500 text-sm mt-1">{t('Adjust parameters to simulate risk scenarios and plan ahead')}</p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">
         {/* Sliders */}
         <div className="card space-y-6">
-          <h3 className="font-semibold text-forest-800 pb-3 border-b border-forest-100">⚙️ Adjust Parameters</h3>
+          <h3 className="font-semibold text-forest-800 pb-3 border-b border-forest-100">{t('⚙️ Adjust Parameters')}</h3>
           <SliderInput label="🌧️ Rainfall (mm)" value={rain}    onChange={setRain}    min={50}  max={500} unit=" mm" />
           <SliderInput label="💰 Market Price (₹/q)" value={price} onChange={setPrice} min={500} max={5000} unit=" ₹" />
           <SliderInput label="🦠 Disease Severity (%)" value={sev}  onChange={setSev}   min={0}   max={100} unit="%" />
@@ -83,20 +85,20 @@ export default function SimulatorPage() {
           <div className="space-y-4">
             <div className={`card border ${results.riskLabel === 'High' ? 'border-red-200 bg-red-50' : results.riskLabel === 'Medium' ? 'border-earth-200 bg-earth-50' : 'border-forest-200 bg-forest-50'}`}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-forest-800">📊 Simulation Results</h3>
+                <h3 className="font-semibold text-forest-800">{t('📊 Simulation Results')}</h3>
                 <span className={riskBadge}>{results.riskLabel} Risk</span>
               </div>
               <div className="space-y-3">
                 {[
-                  ['Risk Score',         `${results.riskScore}/8`,              riskColor],
-                  ['Yield Impact',       `-${results.yieldLoss}%`,              'text-red-600'],
-                  ['Actual Yield',       `${results.yieldAmt} q/acre`,          'text-forest-700'],
-                  ['Profit Projection',  `₹${results.profit.toLocaleString('en-IN')}`, 'text-forest-700'],
-                  ['Irrigation Needed',  results.irr,                           'text-forest-700'],
-                  ['Fertiliser Adj.',    results.fertAdj,                       'text-forest-700'],
+                  [t('Risk Score'),         `${results.riskScore}/8`,              riskColor],
+                  [t('Yield Impact'),       `-${results.yieldLoss}%`,              'text-red-600'],
+                  [t('Actual Yield'),       `${results.yieldAmt} q/acre`,          'text-forest-700'],
+                  [t('Profit Projection'),  `₹${results.profit.toLocaleString('en-IN')}`, 'text-forest-700'],
+                  [t('Irrigation Needed'),  results.irr,                           'text-forest-700'],
+                  [t('Fertiliser Adj.'),    results.fertAdj,                       'text-forest-700'],
                 ].map(([k, v, c]) => (
                   <div key={k} className="flex justify-between items-center py-2 border-b border-white/60 last:border-0 text-sm">
-                    <span className="text-forest-500">{k}</span>
+                    <span className="text-forest-500">{t(k)}</span>
                     <span className={`font-bold ${c}`}>{v}</span>
                   </div>
                 ))}
@@ -106,10 +108,10 @@ export default function SimulatorPage() {
             {/* Insight */}
             <div className="bg-white border border-forest-200 rounded-2xl p-4 text-sm text-forest-600">
               💡 {results.riskLabel === 'High'
-                ? '🚨 High risk detected! Consider drought-resistant varieties and immediate pest management.'
+                ? t('🚨 High risk detected! Consider drought-resistant varieties and immediate pest management.')
                 : results.riskLabel === 'Medium'
-                ? '⚠️ Moderate risk. Monitor rainfall closely and prepare irrigation backup.'
-                : '✅ Favourable conditions. Proceed with planned crop cycle and maintain current practices.'}
+                ? t('⚠️ Moderate risk. Monitor rainfall closely and prepare irrigation backup.')
+                : t('✅ Favourable conditions. Proceed with planned crop cycle and maintain current practices.')}
             </div>
           </div>
         )}
@@ -117,7 +119,7 @@ export default function SimulatorPage() {
 
       {/* Projection chart */}
       <div className="card">
-        <h3 className="font-semibold text-forest-800 mb-4">📈 6-Month Yield Projection</h3>
+        <h3 className="font-semibold text-forest-800 mb-4">{t('📈 6-Month Yield Projection')}</h3>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={projection} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0faf4" />

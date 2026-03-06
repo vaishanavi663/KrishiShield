@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../store/useAppStore'
+import { useTranslation } from 'react-i18next'
 
 function SummaryCard({ title, value, delta }) {
   return (
@@ -12,6 +13,7 @@ function SummaryCard({ title, value, delta }) {
 }
 
 export default function ProfitReportsPage() {
+  const { t } = useTranslation();
   const [summary, setSummary] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -26,7 +28,7 @@ export default function ProfitReportsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">Profit Reports</h2>
+      <h2 className="text-2xl font-semibold mb-4">{t('Profit Reports')}</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         {summary.map(s => (
@@ -38,10 +40,10 @@ export default function ProfitReportsPage() {
         <table className="w-full text-sm">
           <thead className="bg-forest-50 text-forest-600">
             <tr>
-              <th className="text-left px-4 py-3">Crop</th>
-              <th className="text-right px-4 py-3">Revenue</th>
-              <th className="text-right px-4 py-3">Cost</th>
-              <th className="text-right px-4 py-3">Profit</th>
+              <th className="text-left px-4 py-3">{t('Crop')}</th>
+              <th className="text-right px-4 py-3">{t('Revenue')}</th>
+              <th className="text-right px-4 py-3">{t('Cost')}</th>
+              <th className="text-right px-4 py-3">{t('Profit')}</th>
             </tr>
           </thead>
           <tbody>
@@ -57,7 +59,7 @@ export default function ProfitReportsPage() {
         </table>
       </div>
 
-      <div className="mt-6 text-sm text-forest-500">Tip: Use seasonal price estimates and input costs to refine profit forecasts.</div>
+      <div className="mt-6 text-sm text-forest-500">{t('Tip: Use seasonal price estimates and input costs to refine profit forecasts.')}</div>
     </div>
   )
 }

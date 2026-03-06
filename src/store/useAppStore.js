@@ -10,7 +10,7 @@ const apiClient = axios.create({
 
 // automatically include token when available
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('krishi_token');
+  const token = localStorage.getItem('token') || localStorage.getItem('krishi_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -37,6 +37,8 @@ export const api = {
   yieldEstimate: (params) => apiClient.post('/yield', params).then(r => r.data),
   profitReport: () => apiClient.get('/profit-report').then(r => r.data),
   simulate: (params) => apiClient.post('/simulate', params).then(r => r.data),
+
+  getAdvisory: () => apiClient.get('/advisory/today').then(r => r.data),
 }
 
 export const useAppStore = create(
@@ -47,6 +49,14 @@ export const useAppStore = create(
       token: null,
       isAuthenticated: false,
       language: 'en',
+
+//language
+  language: localStorage.getItem("language") || "en",
+
+  setLanguage: (lang) => {
+    localStorage.setItem("language", lang)
+    set({ language: lang })
+  },
 
       // Onboarding data
       onboarding: {
@@ -79,6 +89,7 @@ export const useAppStore = create(
           onboarding: onboard
         });
         localStorage.setItem('krishi_token', data.token);
+        localStorage.setItem('token', data.token);
         return data;
       },      register: async (details) => {
         const data = await api.register(details);
@@ -95,6 +106,7 @@ export const useAppStore = create(
           onboarding: onboard
         });
         localStorage.setItem('krishi_token', data.token);
+        localStorage.setItem('token', data.token);
         return data;
       },
       logout: () => {

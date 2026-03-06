@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import CropRecommendation from '../models/cropRecommendation.js';
 import DiseaseResult from '../models/diseaseResult.js';
+import { translateText } from "../services/translate.js";
 
 const router = express.Router();
 
@@ -49,7 +50,13 @@ router.post('/analyze-crop', auth, async (req, res) => {
       rainfall,
       result
     });
-    res.json(result);
+    const lang = req.query.lang || "en";
+
+if (lang !== "en") {
+  result.insight = await translateText(result.insight, lang);
+}
+
+res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

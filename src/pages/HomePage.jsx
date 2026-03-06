@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAppStore } from '../store/useAppStore'
+import { useTranslation } from 'react-i18next'
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts'
 import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, ArrowRight, Leaf, Zap } from 'lucide-react'
 import FarmSummaryCards from './FarmSummaryCards'
@@ -18,26 +19,34 @@ const yieldData = [
 
 const riskData = [{ name: 'Safe Zone', value: 58, fill: '#52b788' }]
 
-const recentAlerts = [
-  { icon: '🦠', type: 'danger',  title: 'Leaf Blight Detected',           desc: 'Moderate severity at 22% — apply treatment within 48h', time: '2h ago' },
-  { icon: '⛈️', type: 'warning', title: 'Rainfall Variability Detected',  desc: '+12% above seasonal average', time: '5h ago' },
-  { icon: '💰', type: 'success', title: 'Market Price Opportunity',        desc: 'Maize prices projected +8–12% in Q2', time: '1d ago' },
-  { icon: '🌡️', type: 'warning', title: 'Temperature Anomaly',            desc: '2°C above optimal for Maize pollination', time: '1d ago' },
-]
-
-const quickActions = [
-  { icon: '🌱', label: 'Run Crop Analysis', path: '/app/crop-planner', color: 'bg-forest-500' },
-  { icon: '📷', label: 'Scan for Disease',  path: '/app/scan-crop',    color: 'bg-earth-500' },
-  { icon: '🧪', label: 'Risk Simulator',    path: '/app/simulator',    color: 'bg-blue-500' },
-  { icon: '📄', label: 'Get Report',        path: '/app/report',       color: 'bg-purple-500' },
-]
-
 export default function HomePage() {
   const navigate = useNavigate()
   const { user, onboarding } = useAppStore()
+  const { t } = useTranslation()
 
   const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  let greeting
+  if (hour < 12) {
+    greeting = t('goodMorning')
+  } else if (hour < 17) {
+    greeting = t('goodAfternoon')
+  } else {
+    greeting = t('goodEvening')
+  }
+
+  const recentAlerts = [
+    { icon: '🦠', type: 'danger',  title: 'Leaf Blight Detected',           desc: 'Moderate severity at 22% — apply treatment within 48h', time: '2h ago' },
+    { icon: '⛈️', type: 'warning', title: 'Rainfall Variability Detected',  desc: '+12% above seasonal average', time: '5h ago' },
+    { icon: '💰', type: 'success', title: 'Market Price Opportunity',        desc: 'Maize prices projected +8–12% in Q2', time: '1d ago' },
+    { icon: '🌡️', type: 'warning', title: 'Temperature Anomaly',            desc: '2°C above optimal for Maize pollination', time: '1d ago' },
+  ]
+
+  const quickActions = [
+    { icon: '🌱', label: t('analyzeCrop'), path: '/app/crop-planner', color: 'bg-forest-500' },
+    { icon: '📷', label: t('scanCrop'),    path: '/app/scan-crop',    color: 'bg-earth-500' },
+    { icon: '🧪', label: t('riskSimulator'),    path: '/app/simulator',    color: 'bg-blue-500' },
+    { icon: '📄', label: t('healthReport'),        path: '/app/report',       color: 'bg-purple-500' },
+  ]
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -48,37 +57,37 @@ export default function HomePage() {
             {greeting}, {user?.username || 'Farmer'}! 🌞
           </h1>
           <p className="text-forest-500 text-sm mt-0.5">
-            {user?.state || 'Maharashtra'} · {onboarding.landType ? onboarding.landType.replace(/^\w/, c => c.toUpperCase()) + ' Soil' : 'Loamy Soil'} · {onboarding.farmSize ? onboarding.farmSize + ' farm' : '5–20 Acres'}
+            {user?.state || 'Maharashtra'} · {onboarding.landType ? onboarding.landType.replace(/^\w/, c => c.toUpperCase()) + ' ' + t('soilType') : 'Loamy ' + t('soilType')} · {onboarding.farmSize ? onboarding.farmSize + ' ' + t('farmSize') : '5–20 ' + t('farmSize')}
           </p>
         </div>
         <button onClick={() => navigate('/app/crop-planner')}
           className="btn-primary flex items-center gap-2 text-sm">
-          <Zap size={15} /> New Analysis
+          <Zap size={15} /> {t('newAnalysis')}
         </button>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="stat-card border-l-4 border-forest-400">
-          <div className="text-xs font-bold text-forest-500 uppercase tracking-wider mb-2">Top Crop</div>
+          <div className="text-xs font-bold text-forest-500 uppercase tracking-wider mb-2">{t('topCrop')}</div>
           <div className="text-lg font-display font-bold text-forest-700">🌽 Maize</div>
-          <div className="text-xs text-forest-400 mt-1">Confidence: 87% · ROI: ₹28K–₹35K</div>
+          <div className="text-xs text-forest-400 mt-1">{t('confidence')}: 87% · {t('roi')}: ₹28K–₹35K</div>
         </div>
         <div className="stat-card border-l-4 border-earth-400">
-          <div className="text-xs font-bold text-forest-500 uppercase tracking-wider mb-2">Risk Level</div>
+          <div className="text-xs font-bold text-forest-500 uppercase tracking-wider mb-2">{t('riskLevel')}</div>
           <div className="flex items-center gap-1.5">
             <AlertTriangle size={18} className="text-earth-500" />
-            <span className="text-lg font-display font-bold text-earth-600">Medium</span>
+            <span className="text-lg font-display font-bold text-earth-600">{t('medium')}</span>
           </div>
-          <div className="text-xs text-forest-400 mt-1">Rainfall deviation: +12%</div>
+          <div className="text-xs text-forest-400 mt-1">{t('rainfallDeviation')}: +12%</div>
         </div>
         <div className="stat-card border-l-4 border-red-400">
-          <div className="text-xs font-bold text-forest-500 uppercase tracking-wider mb-2">Disease Alert</div>
+          <div className="text-xs font-bold text-forest-500 uppercase tracking-wider mb-2">{t('diseaseAlert')}</div>
           <div className="text-base font-display font-bold text-red-600">Leaf Blight</div>
-          <div className="text-xs text-forest-400 mt-1">Severity: Moderate 22%</div>
+          <div className="text-xs text-forest-400 mt-1">{t('severity')}: {t('medium')} 22%</div>
         </div>
         <div className="stat-card border-l-4 border-forest-300">
-          <div className="text-xs font-bold text-forest-500 uppercase tracking-wider mb-2">Est. Yield Loss</div>
+          <div className="text-xs font-bold text-forest-500 uppercase tracking-wider mb-2">{t('estimatedYieldLoss')}</div>
           <div className="flex items-center gap-1.5">
             <TrendingDown size={18} className="text-red-400" />
             <span className="text-lg font-display font-bold text-forest-800">14%</span>
@@ -110,7 +119,7 @@ export default function HomePage() {
         {/* Risk gauge */}
         <div className="card flex flex-col">
           <h3 className="font-semibold text-forest-800 flex items-center gap-2 mb-4">
-            <AlertTriangle size={17} className="text-earth-500" /> Risk Overview
+            <AlertTriangle size={17} className="text-earth-500" /> {t('riskOverview')}
           </h3>
           <div className="flex justify-center mb-4">
             <div className="relative w-36 h-36">
@@ -126,7 +135,12 @@ export default function HomePage() {
             </div>
           </div>
           <div className="space-y-2 flex-1">
-            {[['Rainfall Deviation', '+12%', 'bm'], ['Temperature', 'Optimal', 'bl'], ['Market Trend', 'Neutral', 'bm'], ['Pest Pressure', 'Medium', 'bm']].map(([k,v,c]) => (
+            {[
+              [t('rainfallDeviation'), '+12%', 'bm'],
+              [t('temperature'), t('optimal'), 'bl'],
+              [t('marketTrend'), 'Neutral', 'bm'],
+              [t('pestPressure'), t('medium'), 'bm']
+            ].map(([k,v,c]) => (
               <div key={k} className="flex items-center justify-between text-xs">
                 <span className="text-forest-500">{k}</span>
                 <span className={c === 'bl' ? 'badge-low' : 'badge-medium'}>{v}</span>
