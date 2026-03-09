@@ -35,10 +35,13 @@ app.use("/api/advisory", advisoryRoutes);
 app.use('/api', weatherRoutes);
 
 // root test route
-app.get('/', (req, res) => {
-  res.send('KrishiShield Backend API is running 🚀');
+app.get("/", (req, res) => {
+  res.json({
+    status: "ok",
+    service: "KrishiShield API",
+  });
+  res.send("KrishiShield backend is running");
 });
-
 app.use('/api/auth', authRoutes);
 app.use('/api', analysisRoutes);
 app.use('/api/sms', smsRoutes);
