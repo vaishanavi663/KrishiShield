@@ -40,7 +40,6 @@ app.get("/", (req, res) => {
     status: "ok",
     service: "KrishiShield API",
   });
-  res.send("KrishiShield backend is running");
 });
 app.use('/api/auth', authRoutes);
 app.use('/api', analysisRoutes);
@@ -55,7 +54,7 @@ const HOST = process.env.HOST || '0.0.0.0';
     console.log('✅ Database connection established');
 
     // update database schema automatically
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
 
     app.listen(PORT, HOST, () => {
       console.log(`🚀 Server listening on http://${HOST}:${PORT}`);
