@@ -51,20 +51,21 @@ app.use('/api/sms', smsRoutes);
 
 const PORT = process.env.PORT || 8080;
 
-(async function start() {
+async function start() {
   try {
     await sequelize.authenticate();
     console.log("✅ Database connection established");
 
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server listening on port ${PORT}`);
     });
 
   } catch (err) {
     console.error("❌ Unable to start server", err);
   }
-})();
+};
 
+start();
 
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
