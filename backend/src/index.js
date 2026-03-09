@@ -49,7 +49,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api', analysisRoutes);
 app.use('/api/sms', smsRoutes);
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 
 async function start() {
   try {
