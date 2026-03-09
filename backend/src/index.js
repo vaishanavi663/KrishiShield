@@ -27,6 +27,10 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/health", (req, res) => {
+  res.send("OK");
+});
+
 //what should i do
 app.use("/api/advisory", advisoryRoutes);
 
@@ -54,7 +58,7 @@ const HOST = process.env.HOST || '0.0.0.0';
     console.log('✅ Database connection established');
 
     // update database schema automatically
-    await sequelize.sync();
+   
 
     app.listen(PORT, HOST, () => {
       console.log(`🚀 Server listening on http://${HOST}:${PORT}`);
