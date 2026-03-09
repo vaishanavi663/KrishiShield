@@ -1,5 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAppStore } from '../../store/useAppStore'
+import { getApiBaseUrl } from '../../config.js'
 import {
   LayoutDashboard, Sprout, Camera, FlaskConical,
   TrendingDown, Lightbulb, FileText, LogOut, Globe, ChevronRight,
@@ -41,7 +42,7 @@ export default function DashboardLayout() {
       ({ coords: { latitude: lat, longitude: lon } }) => {
 
         const apiUrl =
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/weather?lat=${lat}&lon=${lon}`
+          `${getApiBaseUrl()}/weather?lat=${lat}&lon=${lon}`
 
         fetch(apiUrl)
           .then(res => {

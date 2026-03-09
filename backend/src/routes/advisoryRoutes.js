@@ -51,9 +51,10 @@ router.get("/today", auth, async (req, res) => {
 
     let weatherData = null;
 
+    const weatherBase = (process.env.WEATHER_API_BASE || 'https://api.openweathermap.org').replace(/\/$/, '');
     try {
       const weatherRes = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.WEATHER_API_KEY}&units=metric`
+        `${weatherBase}/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${process.env.WEATHER_API_KEY}&units=metric`
       );
 
       weatherData = weatherRes.data;

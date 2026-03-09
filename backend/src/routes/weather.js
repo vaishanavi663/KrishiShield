@@ -15,7 +15,8 @@ router.get("/weather", async (req, res) => {
       return res.status(500).json({ message: 'Server mis‑configured: missing WEATHER_API_KEY' });
     }
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    const base = (process.env.WEATHER_API_BASE || 'https://api.openweathermap.org').replace(/\/$/, '');
+    const url = `${base}/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -48,7 +49,8 @@ router.get('/weather-forecast', async (req, res) => {
     if (!apiKey) {
       return res.status(500).json({ message: 'Server mis‑configured: missing WEATHER_API_KEY' });
     }
-    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&appid=${apiKey}&units=metric`;
+    const base = (process.env.WEATHER_API_BASE || 'https://api.openweathermap.org').replace(/\/$/, '');
+    const url = `${base}/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&appid=${apiKey}&units=metric`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -56,7 +58,7 @@ router.get('/weather-forecast', async (req, res) => {
       day: new Date(d.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
       temp: Math.round(d.temp.day),
       desc: d.weather?.[0]?.description || '',
-      icon: d.weather?.[0]?.icon ? `https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png` : '',
+      icon: d.weather?.[0]?.icon ? `${(process.env.WEATHER_ICON_BASE || 'https://openweathermap.org').replace(/\/$/, '')}/img/wn/${d.weather[0].icon}@2x.png` : '',
       humidity: d.humidity,
       wind: d.wind_speed
     }));

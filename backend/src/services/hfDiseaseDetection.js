@@ -64,12 +64,12 @@ export async function hfClassifyImage({ modelId, token, imageBuffer, retries = 2
   if (!token) throw new Error('HF_API_TOKEN is not configured');
   if (!imageBuffer || !Buffer.isBuffer(imageBuffer)) throw new Error('Missing image buffer');
 
-//hugging face api
+  const hfBase = (process.env.HF_INFERENCE_BASE || 'https://router.huggingface.co').replace(/\/$/, '');
   const safeModelPath = String(modelId)
     .split('/')
     .map((seg) => encodeURIComponent(seg))
     .join('/');
-  const url = `https://router.huggingface.co/hf-inference/models/${safeModelPath}`;
+  const url = `${hfBase}/hf-inference/models/${safeModelPath}`;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     const { resp, data } = await doHfRequest(url, token, imageBuffer);

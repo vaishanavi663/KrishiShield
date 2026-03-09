@@ -44,6 +44,7 @@ app.use('/api', analysisRoutes);
 app.use('/api/sms', smsRoutes);
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 (async function start() {
   try {
@@ -53,20 +54,8 @@ const PORT = process.env.PORT || 5000;
     // update database schema automatically
     await sequelize.sync({ alter: true });
 
-    const server = app.listen(PORT, () => {
-      console.log(`🚀 Server listening on http://localhost:${PORT}`);
-    });
-
-    server.on('error', (err) => {
-      if (err.code === 'EADDRINUSE') {
-        console.error(
-          `❌ Port ${PORT} is already in use. ` +
-          'Make sure no other instance of the backend is running, or set a different PORT in your environment.'
-        );
-      } else {
-        console.error('❌ Server failed to start due to an unexpected error:', err);
-      }
-      process.exit(1);
+    app.listen(PORT, HOST, () => {
+      console.log(`🚀 Server listening on http://${HOST}:${PORT}`);
     });
 
   } catch (err) {

@@ -2,10 +2,11 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import axios from 'axios'
+import { getApiBaseUrl } from '../config.js'
 
-// API client that points at our backend; configure base URL via VITE_API_URL
+// API client: base URL from env (VITE_API_URL); no hardcoded host/port
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: getApiBaseUrl(),
 });
 
 // automatically include token when available
