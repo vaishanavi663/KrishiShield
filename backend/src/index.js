@@ -49,25 +49,22 @@ app.use('/api/auth', authRoutes);
 app.use('/api', analysisRoutes);
 app.use('/api/sms', smsRoutes);
 
-const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || '0.0.0.0';
+const PORT = process.env.PORT || 8080;
 
 (async function start() {
   try {
     await sequelize.authenticate();
-    console.log('✅ Database connection established');
+    console.log("✅ Database connection established");
 
-    // update database schema automatically
-   
-
-    app.listen(PORT, HOST, () => {
-      console.log(`🚀 Server listening on http://${HOST}:${PORT}`);
+    app.listen(PORT, () => {
+      console.log(`🚀 Server listening on port ${PORT}`);
     });
 
   } catch (err) {
-    console.error('❌ Unable to start server', err);
+    console.error("❌ Unable to start server", err);
   }
 })();
+
 
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
