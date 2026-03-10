@@ -5,5 +5,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: { '@': '/src' }
+  },
+  build: {
+    outDir: 'dist',  // ← default, must match server.cjs
   }
 })
