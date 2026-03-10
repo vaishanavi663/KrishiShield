@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
-const dbUrl = process.env.DATABASE_URL;
+//const dbUrl = process.env.DATABASE_URL;
+const dbUrl = process.env.DATABASE_PUBLIC_URL;
 
 if (!dbUrl) {
   console.error("❌ DATABASE_URL is not set!");
